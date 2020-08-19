@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>教师主界面</title>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <!--<link href="../image/bitbug_favicon.ico" rel="icon" type="image/x-ico">-->
+  <link href="../css/teachermain.css" type="text/css" rel="stylesheet">
+  <link href="../css/tablestyle.css" type="text/css" rel="stylesheet">
+  <script src="../js/jump.js"></script>
+</head>
+<body>
+<div id="logoline">
+  <div id="logo"></div>
+  <font id="title">在线考试&培训系统</font>
+  <a id="info" href="signin.html">个人中心</a>
+  <div id="search1">
+    <input type="text" placeholder="请输入..." name="" id="searchid22" value="" />
+    <i id="searchfont1" onclick="finStuByclassid()">按课程id查找</i>
+    <i id="searchfont2" onclick="finStuByName()">按学生姓名查找</i>
+  </div>
+</div>
+
+<div id="navigation">
+  <ul id="navigate">
+    <li class="choose"><a id="home" onclick="jumpTeacher()">我的课程</a></li>
+    <li class="choose"><a id="createclass" onclick="jumpCreate()">创建新课程</a></li>
+    <li class="choose"><a id="student">学生信息</a></li>
+    <li class="choose"><a id="class" onclick="jumpClass()">课程统计信息</a></li>
+  </ul>
+  <h6 id="slogen">步步升，你值得信赖的软件团队</h6>
+</div>
+
+<div id="maintain">
+  <h6 class="createtitle">看看祖国的花朵呀～</h6>
+  <table border="1" align="center" class="tablestyle" id="studentinfo">
+
+  </table>
+</div>
+<script>
+  var teacher=UrlParam.paramValues("teacherid");
+
+  // if(sessionStorage.getItem("username") == null){
+  //   window.location.href = "signin.html";
+  // }
+  //左侧导航栏以及搜索鼠标移动事件
+  window.onload = function() {
+    var set = document.getElementById('home');
+    set.onmousemove = function () {
+      set.style.fontSize='x-large';
+      set.style.color='#43c3b0';
+    }
+    set.onmouseout=function () {
+      set.style.fontSize='medium';
+      set.style.color='black';
+    }
+    var set2 = document.getElementById('student');
+    set2.style.fontSize="x-large";
+    set2.style.textDecoration="underline";
+
+    var set1 = document.getElementById('createclass');
+    set1.onmousemove = function () {
+      set1.style.fontSize='x-large';
+      set1.style.color='#43c3b0';
+    }
+    set1.onmouseout=function () {
+      set1.style.fontSize='medium';
+      set1.style.color='black';
+    }
+    var set3 = document.getElementById('class');
+    set3.onmousemove = function () {
+      set3.style.fontSize='x-large';
+      set3.style.color='#43c3b0';
+    }
+    set3.onmouseout=function () {
+      set3.style.fontSize='medium';
+      set3.style.color='black';
+    }
+    var searchfont = document.getElementById('searchfont1');
+    searchfont.onmousemove = function () {
+      searchfont.style.color='#29512d';
+    }
+    searchfont.onmouseout=function () {
+      searchfont.style.color='black';
+    }
+    var searchfont2 = document.getElementById('searchfont2');
+    searchfont2.onmousemove = function () {
+      searchfont2.style.color='#29512d';
+    }
+    searchfont2.onmouseout=function () {
+      searchfont2.style.color='black';
+    }
+  }
+
+</script>
+<script>
+  function jumpCreate() {
+    window.location.href="createclass.html?teacherid="+teacher;
+  }
+  function jumpTeacher() {
+    window.location.href="teachermian.html?teacherid="+teacher;
+  }
+  function jumpClass() {
+    window.location.href="classstatistic.html?teacherid="+teacher;
+  }
+</script>
+<script>
+  //显示表格
+  var a="  <tr>\n" +
+    "      <th class=\"tablehead2\">学生id</th> <th class=\"tablehead2\">姓名</th>\n" +
+    "      <th class=\"tablehead2\">性别</th> <th class=\"tablehead2\">年龄</th>\n" +
+    "      <th class=\"tablehead2\">手机号</th> <th class=\"tablehead2\">课程</th>\n" +
+    "      <th class=\"tablehead2\">课程id</th>\n" +
+    "    </tr>";
+  $.ajax({
+    url: "http://localhost:8080/info/studentinfo/"+teacher,
+    type: "GET",
+    contentType: "application/json;charset=utf-8",
+    success: function (data) {
+      var obj=JSON.parse(data);
+      if(obj.status==200){
+        var info=obj.data;
+        for(var x in info) {
+          a+="<tr></tr> <td class=\"tablebody\">"+info[x].studentId+"</td><td class=\"tablebody\">"+info[x].studentName+"</td>\n" +
+            "      <td class=\"tablebody\">"+info[x].sex+"</td><td class=\"tablebody\">"+info[x].age+"</td>\n" +
+            "      <td class=\"tablebody\">"+info[x].phone+"</td><td class=\"tablebody\">"+info[x].className+"</td>\n" +
+            "      <td class=\"tablebody\">"+info[x].classId+"</td></tr>";
+        }
+        var meeting = document.getElementById("studentinfo");
+        meeting.innerHTML=a;
+      }
+      else{
+        alert("数据加载异常");
+      }
+    },
+    error: function (data) {
+      alert("搜索有误");
+    }
+  })
+</script>
+
+<script>
+  //查找规定课程学生
+  function finStuByclassid() {
+    var classid=$('#searchid22').val();
+    if(isNaN(classid)){
+      alert("请输入数字");
+    }
+    else {
+      if (classid.length > 0) {
+        var a = "  <tr>\n" +
+          "      <th class=\"tablehead2\">学生id</th> <th class=\"tablehead2\">姓名</th>\n" +
+          "      <th class=\"tablehead2\">性别</th> <th class=\"tablehead2\">年龄</th>\n" +
+          "      <th class=\"tablehead2\">手机号</th> <th class=\"tablehead2\">课程</th>\n" +
+          "      <th class=\"tablehead2\">课程id</th>\n" +
+          "    </tr>";
+        $.ajax({
+          url: "http://localhost:8080/info/classstudent/" + classid + "/" + teacher,
+          type: "GET",
+          contentType: "application/json;charset=utf-8",
+          success: function (data) {
+            var obj = JSON.parse(data);
+            if (obj.status == 200) {
+              try {
+                var info = obj.data;
+                for (var x in info) {
+                  a += "<tr></tr> <td class=\"tablebody\">" + info[x].studentId + "</td><td class=\"tablebody\">" + info[x].studentName + "</td>\n" +
+                    "      <td class=\"tablebody\">" + info[x].sex + "</td><td class=\"tablebody\">" + info[x].age + "</td>\n" +
+                    "      <td class=\"tablebody\">" + info[x].phone + "</td><td class=\"tablebody\">" + info[x].className + "</td>\n" +
+                    "      <td class=\"tablebody\">" + info[x].classId + "</td></tr>";
+                }
+                var meeting = document.getElementById("studentinfo");
+                meeting.innerHTML = a;
+              } catch (Exception) {
+                alert("未找到课程");
+              }
+            }
+            else {
+              alert("数据加载异常");
+            }
+          },
+          error: function (data) {
+            alert("数据加失败");
+          }
+        })
+      }
+      else {
+        alert("请输入搜索信息");
+      }
+    }
+  }
+
+
+  //查找规定课程学生
+  function finStuByName() {
+    var classid=$('#searchid22').val();;
+    if(classid.length>0){
+      var a="  <tr>\n" +
+        "      <th class=\"tablehead2\">学生id</th> <th class=\"tablehead2\">姓名</th>\n" +
+        "      <th class=\"tablehead2\">性别</th> <th class=\"tablehead2\">年龄</th>\n" +
+        "      <th class=\"tablehead2\">手机号</th> <th class=\"tablehead2\">课程</th>\n" +
+        "      <th class=\"tablehead2\">课程id</th>\n" +
+        "    </tr>";
+      $.ajax({
+        url: "http://localhost:8080/info/studentclass/"+classid+"/"+teacher,
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        success: function (data) {
+          var obj=JSON.parse(data);
+          if(obj.status==200){
+            try{   var info=obj.data;
+              for(var x in info) {
+                a+="<tr></tr> <td class=\"tablebody\">"+info[x].studentId+"</td><td class=\"tablebody\">"+info[x].studentName+"</td>\n" +
+                  "      <td class=\"tablebody\">"+info[x].sex+"</td><td class=\"tablebody\">"+info[x].age+"</td>\n" +
+                  "      <td class=\"tablebody\">"+info[x].phone+"</td><td class=\"tablebody\">"+info[x].className+"</td>\n" +
+                  "      <td class=\"tablebody\">"+info[x].classId+"</td></tr>";
+              }
+              var meeting = document.getElementById("studentinfo");
+              meeting.innerHTML=a;
+            }catch (Exception){
+              alert("未找到课程");
+            }
+          }
+          else{
+            alert("数据加载异常");
+          }
+        },
+        error: function (data) {
+          alert("数据加失败");
+        }
+      })
+    }
+    else{
+      alert("请输入搜索信息");
+    }
+  }
+</script>
+</body>
+</html>

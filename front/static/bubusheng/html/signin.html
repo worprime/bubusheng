@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+<meta charset="UTF-8">
+<title>线上考试培训系统</title>
+
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<!--<link href="../image/bitbug_favicon.ico" rel="icon" type="image/x-ico">-->
+    <link href="../css/style.css" type="text/css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<div id="bg" ></div>
+<div id="mask"></div>
+<h1 id="slogan">考试&线上培训系统教师端</h1>
+<button id="showLogin">欢迎使用</button>
+
+<div id="bg2"></div>
+<div id = "login">
+    <div id="topic"><h1><i>步步升</i></h1>考试&培训系统</div>
+    <div id="topic2"><p><i>Login</i></p></div>
+    <form id="logininfo">
+        <br><br>
+        <input placeholder="账户：" type="number" id="in1">
+        <br><br>
+        <input placeholder="密码：" type="password" id="in2">
+
+        <br><br><br>
+    </form>
+    <button id="loginbtn">登录</button>
+    <button id="signupbtn" onclick="jump()">注册</button>
+</div>
+
+</body>
+<script>
+    function htmlEncode (str) {
+        var ele = document.createElement('span');
+        ele.appendChild( document.createTextNode( str ) );
+        return ele.innerHTML;
+    }
+    //解析
+    function htmlDecode (str) {
+        var ele = document.createElement('span');
+        ele.innerHTML = str;
+        return ele.textContent;
+    }
+</script>
+<script>
+
+    $(document).ready(function(){
+            $("#showLogin").click(function(){
+                $("#mask").css("display","none");
+                $("#slogan").css("display","none");
+                $("#showLogin").css("display","none");
+                $("#bg2").css("display","block");
+                $("#login").css("display","block");
+            });
+            });
+    $(document).ready(function(){
+        $("#loginbtn").click(function(){
+            var userinfo={
+                companyid:document.forms["logininfo"]["in1"].value,
+                password:document.forms["logininfo"]["in2"].value
+            };
+            if(userinfo.companyid.length>0&&userinfo.password.length>0) {
+                $.ajax({
+                  url: "http://localhost:8080/teacher/login/" + userinfo.companyid,
+                  type: "GET",
+                  contentType: "application/json;charset=utf-8",
+                  // data:JSON.stringify(userinfo.companyid),
+                  success: function (data) {
+
+                    var obj = JSON.parse(data);
+
+                    if (userinfo.password == obj.data.password) {
+                      if (obj.data.flag == "0") {
+                        sessionStorage.setItem("username", userinfo.companyid);
+                        window.location.href = "teachermian.html?teacherid=" + userinfo.companyid;
+                      }
+                      else {
+                        alert("账号不存在");
+                      }
+                    }
+                    else {
+                      alert("账号或密码错误");
+                    }
+
+                  },
+                  error: function (data) {
+                    alert("连接失败");
+                  }
+                })
+            }
+            else {
+              alert("输入不能为空")
+            }
+
+        });
+    });
+
+
+    function jump() {
+      window.location.href ="sginup.html";
+    }
+</script>
+</html>

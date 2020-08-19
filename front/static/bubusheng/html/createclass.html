@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>教师主界面</title>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <!--<link href="../image/bitbug_favicon.ico" rel="icon" type="image/x-ico">-->
+  <link href="../css/teachermain.css" type="text/css" rel="stylesheet">
+  <script src="../js/jump.js"></script>
+</head>
+<body>
+<div id="logoline">
+  <div id="logo"></div>
+  <font id="title">在线考试&培训系统</font>
+  <a id="info" href="signin.html">个人中心</a>
+
+</div>
+
+<div id="navigation">
+  <ul id="navigate">
+    <li class="choose"><a id="home" onclick="jumpTeacher()">我的课程</a></li>
+    <li class="choose"><a id="createclass">创建新课程</a></li>
+    <li class="choose"><a id="student" onclick="jumpStu()">学生信息</a></li>
+    <li class="choose"><a id="class" onclick="jumpClass()">课程统计信息</a></li>
+  </ul>
+  <h6 id="slogen">步步升，你值得信赖的软件团队</h6>
+</div>
+
+<div id="maintain">
+  <h6 class="createtitle">创建你的课程吧^~^</h6>
+  <div id="create">
+
+      <form style="font-family: STKaiti" id="infoform">
+        <h3 id="infoname1">课程名</h3>
+        <input id="info1" placeholder="课程名..." type="text" id="classname">
+        <h3 id="infoname2"> 授课教师</h3>
+        <input id="info2" placeholder="授课教师..." type="text" id="teachername">
+        <h3 id="infoname3">课程简介</h3>
+        <textarea id="info3" id="classinfo" textarea="课程简介.."></textarea>
+        <h3 id="infoname4">课程时间</h3><br>
+        <input id="info4"  type="date" id="classtime">
+        <h3 id="infoname5">课程类型</h3>
+        <input id="info5" placeholder="课程类型..." type="text" id="classtype">
+      </form>
+    <button id="pushclass" onclick="submitinfo()">提交</button>
+  </div>
+</div>
+<script>
+  var teacher=UrlParam.paramValues("teacherid");
+
+  // if(sessionStorage.getItem("username") == null){
+  //   window.location.href = "signin.html";
+  // }
+  //左侧导航栏以及搜索鼠标移动事件
+  window.onload = function() {
+    var set = document.getElementById('home');
+    set.onmousemove = function () {
+      set.style.fontSize='x-large';
+      set.style.color='#43c3b0';
+    }
+    set.onmouseout=function () {
+      set.style.fontSize='medium';
+      set.style.color='black';
+    }
+    var set1 = document.getElementById('createclass');
+    set1.style.fontSize="x-large";
+    set1.style.textDecoration="underline";
+
+    var set2 = document.getElementById('student');
+    set2.onmousemove = function () {
+      set2.style.fontSize='x-large';
+      set2.style.color='#43c3b0';
+    }
+    set2.onmouseout=function () {
+      set2.style.fontSize='medium';
+      set2.style.color='black';
+    }
+    var set3 = document.getElementById('class');
+    set3.onmousemove = function () {
+      set3.style.fontSize='x-large';
+      set3.style.color='#43c3b0';
+    }
+    set3.onmouseout=function () {
+      set3.style.fontSize='medium';
+      set3.style.color='black';
+    }
+    var searchfont = document.getElementById('searchfont');
+    searchfont.onmousemove = function () {
+      searchfont.style.color='#29512d';
+    }
+    searchfont.onmouseout=function () {
+      searchfont.style.color='black';
+    }
+  }
+
+</script>
+<script>
+function submitinfo() {
+var classname=document.forms["infoform"]["info1"].value;
+var teachername=document.forms["infoform"]["info2"].value;
+var infomation=document.forms["infoform"]["info2"].value;
+var time=document.forms["infoform"]["info4"].value;
+var classtype=document.forms["infoform"]["info5"].value;
+var teaid=parseInt(teacher);
+alert(time);
+if(classname.length>0 && teachername.length>0 && infomation.length>0 && time.length>0 && classtype.length>0){
+  $.ajax({
+  url: "http://localhost:8080/create/class",
+  type: "GET",
+  contentType: "application/json;charset=utf-8",
+  data:{
+    classname:classname,
+    teachername:teachername,
+    teacherid:teaid,
+    intro:infomation,
+    beginning:time,
+    type:classtype
+  },
+  success: function (data) {
+    var obj=JSON.parse(data);
+    if(obj=="1"){ alert("提交成功");}
+    else {
+      alert("提交失败");
+    }
+  },
+  error: function (data) {
+    alert("数据加失败");
+  }
+})
+}
+else {
+  alert("信息不全，提交失败");
+}
+}
+</script>
+<script>
+  function jumpTeacher() {
+    window.location.href="teachermian.html?teacherid="+teacher;
+  }
+  function jumpStu() {
+    window.location.href="studentinfo.html?teacherid="+teacher;
+  }
+  function jumpClass() {
+    window.location.href="classstatistic.html?teacherid="+teacher;
+  }
+</script>
+</body>
+</html>

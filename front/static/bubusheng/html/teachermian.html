@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师主界面</title>
+
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <!--<link href="../image/bitbug_favicon.ico" rel="icon" type="image/x-ico">-->
+  <link href="../css/teachermain.css" type="text/css" rel="stylesheet">
+  <script src="../js/jump.js"></script>
+</head>
+<body>
+    <div id="logoline">
+      <div id="logo"></div>
+      <font id="title">在线考试&培训系统</font>
+      <a id="info" href="signin.html">个人中心</a>
+      <div id="search">
+        <input type="number" placeholder="请输入课程id..." name="" id="searchid" value="" />
+        <i id="searchfont" onclick="searchClass()">搜索</i>
+      </div>
+    </div>
+
+      <div id="navigation">
+        <ul id="navigate">
+          <li class="choose"><a id="home">我的课程</a></li>
+          <li class="choose"><a id="createclass" onclick="jumpCreate()">创建新课程</a></li>
+          <li class="choose"><a id="student" onclick="jumpStu()">学生信息</a></li>
+          <li class="choose"><a id="class" onclick="jumpClass()">课程统计信息</a></li>
+        </ul>
+        <h6 id="slogen">步步升，你值得信赖的软件团队</h6>
+      </div>
+
+      <div id="maintain">
+      </div>
+<script>
+  var teacher=UrlParam.paramValues("teacherid");
+  // if(sessionStorage.getItem("username") == null){
+  //   window.location.href = "signin.html";
+  // }
+    //左侧导航栏以及搜索鼠标移动事件
+  window.onload = function() {
+      var set = document.getElementById('home');
+      set.style.fontSize="x-large";
+      set.style.textDecoration="underline";
+    var set1 = document.getElementById('createclass');
+    set1.onmousemove = function () {
+      set1.style.fontSize='x-large';
+      set1.style.color='#43c3b0'
+    }
+    set1.onmouseout=function () {
+      set1.style.fontSize='medium';
+      set1.style.color='black'
+    }
+    var set2 = document.getElementById('student');
+    set2.onmousemove = function () {
+      set2.style.fontSize='x-large';
+      set2.style.color='#43c3b0'
+    }
+    set2.onmouseout=function () {
+      set2.style.fontSize='medium';
+      set2.style.color='black';
+    }
+    var set3 = document.getElementById('class');
+    set3.onmousemove = function () {
+      set3.style.fontSize='x-large';
+      set3.style.color='#43c3b0'
+    }
+    set3.onmouseout=function () {
+      set3.style.fontSize='medium';
+      set3.style.color='black';
+    }
+    var searchfont = document.getElementById('searchfont');
+    searchfont.onmousemove = function () {
+      searchfont.style.color='#29512d';
+    }
+    searchfont.onmouseout=function () {
+      searchfont.style.color='black';
+    }
+  }
+</script>
+<script>
+  //主界面加载
+  var a=" <h6 class=\"createtitle\">快来看看自己的课程吧～</h6>";
+  $.ajax({
+    url: "http://localhost:8080/course/show/"+teacher,
+    type: "GET",
+    contentType: "application/json;charset=utf-8",
+    success: function (data) {
+      var obj=JSON.parse(data);
+      if(obj.status==200){
+          var info=obj.data;
+         for(var x in info) {
+               a+="  <div class=\"arrange\" id=\""+ info[x].classId+"\" onclick=\"clithis(this)\">\n" +
+                 "        <div class=\"classinfo\">\n" +
+                 info[x].className +
+                 "          <br>\n" +
+                 info[x].teacherName +
+                 "          <br>\n" +
+                 info[x].beginning +
+                 "        </div>\n" +
+                 "      </div>";
+         }
+        var meeting = document.getElementById("maintain");
+        meeting.innerHTML=a;
+      }
+      else{
+        alert("数据加载异常");
+      }
+    },
+    error: function (data) {
+      alert("数据加失败");
+    }
+  })
+
+</script>
+<!--跳转页面-->
+<script>
+  //搜索
+  function searchClass() {
+    var classid=$('#searchid').val();
+    if(classid.length>0){
+      var a=" <h6 class=\"createtitle\">快来看看自己的课程吧～</h6>";
+      $.ajax({
+        url: "http://localhost:8080/course/find/"+classid,
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        success: function (data) {
+          var obj=JSON.parse(data);
+          if(obj.status==200){
+            try{  var info=obj.data;
+              a+="  <div class=\"arrange\" id="+ info.classId+">\n" +
+                "        <div class=\"classinfo\">\n" +
+                info.className +
+                "          <br>\n" +
+                info.teacherName +
+                "          <br>\n" +
+                info.beginning +
+                "        </div>\n" +
+                "      </div>";
+              var meeting = document.getElementById("maintain");
+              meeting.innerHTML=a;
+            }catch (Exception){
+              alert("未找到课程");
+            }
+          }
+          else{
+            alert("数据加载异常");
+          }
+        },
+        error: function (data) {
+          alert("数据加失败");
+        }
+      })
+
+    }
+    else{
+      alert("请输入搜索信息");
+    }
+  }
+  function jumpCreate() {
+    window.location.href="createclass.html?teacherid="+teacher;
+  }
+  function jumpStu() {
+    window.location.href="studentinfo.html?teacherid="+teacher;
+  }
+  function jumpClass() {
+    window.location.href="classstatistic.html?teacherid="+teacher;
+  }
+
+</script>
+<script>
+
+  function clithis(bnt) {
+    window.location.href="http://localhost:8080/#/teacher/TeacherCourse";
+  }
+
+  </script>
+
+</body>
+</html>

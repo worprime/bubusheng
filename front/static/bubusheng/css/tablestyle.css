@@ -1,0 +1,34 @@
+.tablestyle{
+  font-family: "Kaiti TC";
+  border-collapse:collapse;
+  border-radius:10px;
+  overflow:hidden;
+  text-align: center;
+  width: 80%;
+  animation: fade-in;/*动画名称*/
+  animation-duration: 1s;/*动画持续时间*/
+  -webkit-animation:fade-in 1s;/*针对webkit内核*/
+}
+
+.tablehead2{
+  background: #e8eff9;
+  border: 1px solid rgba(13, 14, 13, 0.34);
+}
+
+.tablehead{
+  background: darkorange;
+  border: 1px solid rgba(13, 14, 13, 0.34);
+}
+
+.tablebody{
+  border: 1px solid rgba(13, 14, 13, 0.34);
+  background: white;
+}
+@keyframes fade-in {
+  0% {opacity: 0;}/*初始状态 透明度为0*/
+  100% {opacity: 1;}/*结束状态 透明度为1*/
+}
+@-webkit-keyframes fade-in {/*针对webkit内核*/
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}

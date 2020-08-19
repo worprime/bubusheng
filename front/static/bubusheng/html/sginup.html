@@ -1,0 +1,116 @@
+<!--此部分由2017302580059 蒋加尧完成-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link href="../css/sginup.css" type="text/css" rel="stylesheet">
+    <link href="image/bitbug_favicon.ico" rel="icon" type="image/x-ico">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body>
+<div id="container">
+    <h3 id="welcom">欢迎注册教师步步升考试&培训系统</h3>
+    <div id="topic1" class="topic">
+        <h4>1.填写基本信息</h4>
+        <div id="hengtiao1"></div>
+    </div>
+    <div id="topic3" class="topic">
+        <h4>2.成功注册</h4>
+        <div id="hengtiao3"></div>
+    </div>
+
+    <div class="bodying" id="step1">
+        <form class="form1" id="info1">
+            教师姓名：
+            <input class="inputinfo" type="text"  id="companyname" required style="height: 20px;width: 200px"><br><br>
+            教师电话：
+            <input class="inputinfo" id="companyinfo" style="width: 200px"><br><br>
+            教师账号id:
+            <input class="inputinfo" id="companyinfo2" style="width: 200px"><br><br>
+            密码设置：
+            <input class="inputinfo" type="password"  id="password1" required style="height: 20px;width: 200px"><br><br>
+            确认密码：
+            <input class="inputinfo" type="password"  id="password2" required style="height: 20px;width: 200px"><br><br>
+
+        </form>
+        <button class="next" id="next1">下一步</button>
+    </div>
+
+    <div class="bodying" id="step3">
+         恭喜你，已成功注册多客户端云会议系统账号！
+    </div>
+</div>
+
+<script>
+
+    var IdentifyingCode;//定义变量用于记录验证码
+
+    $(document).ready(function(){
+        var comnanme=document.getElementById("companyname");
+        var compassword=document.getElementById("password1");
+        var compassword2=document.getElementById("password2");
+        var teacherId=document.getElementById("companyinfo2");
+        var phone=document.getElementById("companyinfo");
+        $("#next1").click(function(){
+
+            var comnanme=document.getElementById("companyname");
+            var compassword=document.getElementById("password1");
+            if(comnanme.validity.valueMissing){
+                alert("姓名需填写！")
+            }
+            else if(compassword.validity.valueMissing){
+                alert("密码需填写！")
+            }
+            else if(compassword2.validity.valueMissing){
+                alert("密码需填写！")
+            }
+            else if(teacherId.validity.valueMissing){
+                alert("账号需填写！")
+            }
+            else if(phone.validity.valueMissing){
+                alert("手机号需填写！")
+            }
+            else{
+                if(document.forms["info1"]["password1"].value==document.forms["info1"]["password2"].value){
+                  $.ajax({
+                    url: "http://localhost:8080/teacher/signup",
+                    type: "GET",
+                    contentType: "application/json;charset=utf-8",
+                    data:{
+                     teaid:teacherId.value,
+                      name:comnanme.value,
+                      phone:phone.value,
+                      password:compassword.value
+                    },
+                    success: function (data) {
+                      var obj=JSON.parse(data);
+                      if(obj=="1"){
+                        $("#step1").css("display","none");
+                        $("#step3").css("display","block");
+                        $("#topic2").css("color"," cornflowerblue");
+                        $("#topic1").css("color","black");
+                        $("#hengtiao1").css("background-color","silver");
+                        $("#hengtiao2").css("background-color","cyan");}
+                      else {
+                        alert("提交失败");
+                      }
+                    },
+                    error: function (data) {
+                      alert("数据加失败");
+                    }
+                  })
+                }
+                else{
+                    alert("两次密码不一致！")
+                }
+            }
+
+        });
+    });
+
+</script>
+
+</body>
+</html>

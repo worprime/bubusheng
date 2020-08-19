@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>教师主界面</title>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <!--<link href="../image/bitbug_favicon.ico" rel="icon" type="image/x-ico">-->
+  <link href="../css/teachermain.css" type="text/css" rel="stylesheet">
+  <link href="../css/tablestyle.css" type="text/css" rel="stylesheet">
+  <script src="../js/jump.js"></script>
+
+</head>
+<body>
+<div id="logoline">
+  <div id="logo"></div>
+  <font id="title">在线考试&培训系统</font>
+  <a id="info" href="signin.html">个人中心</a>
+  <div id="search">
+    <input type="text" placeholder="请输入课程名.." name="" id="searchid" value="" />
+    <i id="searchfont" onclick="findclassByname()">查找课程</i>
+  </div>
+</div>
+
+<div id="navigation">
+  <ul id="navigate">
+    <li class="choose"><a id="home" onclick="jumpTeacher()">我的课程</a></li>
+    <li class="choose"><a id="createclass" onclick="jumpCreate()">创建新课程</a></li>
+    <li class="choose"><a id="student" onclick="jumpStu()">学生信息</a></li>
+    <li class="choose"><a id="class">课程统计信息</a></li>
+  </ul>
+  <h6 id="slogen">步步升，你值得信赖的软件团队</h6>
+</div>
+
+<div id="maintain">
+  <h6 class="createtitle">我的课程信息@～@</h6>
+  <table border="1" align="center" class="tablestyle" id="myclassinfo">
+
+  </table>
+</div>
+<script>
+  var teacher=UrlParam.paramValues("teacherid");
+  if(sessionStorage.getItem("username") == null){
+    window.location.href = "signin.html";
+  }
+  //左侧导航栏以及搜索鼠标移动事件
+  window.onload = function() {
+    var set = document.getElementById('home');
+    set.onmousemove = function () {
+      set.style.fontSize='x-large';
+      set.style.color='#43c3b0';
+    }
+    set.onmouseout=function () {
+      set.style.fontSize='medium';
+      set.style.color='black';
+    }
+    var set3 = document.getElementById('class');
+    set3.style.fontSize="x-large";
+    set3.style.textDecoration="underline";
+
+    var set1 = document.getElementById('createclass');
+    set1.onmousemove = function () {
+      set1.style.fontSize='x-large';
+      set1.style.color='#43c3b0';
+    }
+    set1.onmouseout=function () {
+      set1.style.fontSize='medium';
+      set1.style.color='black';
+    }
+    var set2 = document.getElementById('student');
+    set2.onmousemove = function () {
+      set2.style.fontSize='x-large';
+      set2.style.color='#43c3b0';
+    }
+    set2.onmouseout=function () {
+      set2.style.fontSize='medium';
+      set2.style.color='black';
+    }
+    var searchfont = document.getElementById('searchfont');
+    searchfont.onmousemove = function () {
+      searchfont.style.color='#29512d';
+    }
+    searchfont.onmouseout=function () {
+      searchfont.style.color='black';
+    }
+  }
+</script>
+
+<script>
+  //课程信息显示
+  var a=" <tr>\n" +
+    "      <th class=\"tablehead\">课程id</th> <th class=\"tablehead\">课程名</th>\n" +
+    "      <th class=\"tablehead\">开课时间</th> <th class=\"tablehead\">授课教师</th>\n" +
+    "      <th class=\"tablehead\">课程类型</th>\n" +
+    "    </tr>";
+  $.ajax({
+    url: "http://localhost:8080/course/show/"+teacher,
+    type: "GET",
+    contentType: "application/json;charset=utf-8",
+    success: function (data) {
+      var obj=JSON.parse(data);
+      if(obj.status==200){
+        var info=obj.data;
+        for(var x in info) {
+          a+="    <tr>\n" +
+            "      <td class=\"tablebody\">"+info[x].classId+"</td><td class=\"tablebody\">"+info[x].className+"</td>\n" +
+            "      <td class=\"tablebody\">"+info[x].beginning+"</td><td class=\"tablebody\">"+info[x].teacherName+"</td>\n" +
+            "      <td class=\"tablebody\">"+info[x].type+"</td>\n" +
+            "    </tr>";
+        }
+        var meeting = document.getElementById("myclassinfo");
+        meeting.innerHTML=a;
+      }
+      else{
+        alert("数据加载异常");
+      }
+
+    },
+    error: function (data) {
+      alert("数据加失败");
+    }
+  })
+</script>
+<script>
+  function findclassByname() {
+    var classname=$('#searchid').val();
+    if(classname.length>0){
+      var ab=" <tr>\n" +
+        "      <th class=\"tablehead\">课程id</th> <th class=\"tablehead\">课程名</th>\n" +
+        "      <th class=\"tablehead\">开课时间</th> <th class=\"tablehead\">授课教师</th>\n" +
+        "      <th class=\"tablehead\">课程类型</th>\n" +
+        "    </tr>";
+      $.ajax({
+        url: "http://localhost:8080/course/like/"+classname+"/"+teacher,
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        success: function (data) {
+          var obj=JSON.parse(data);
+          if(obj.status==200){
+            var info=obj.data;
+            for(var x in info) {
+              ab+="    <tr>\n" +
+                "      <td class=\"tablebody\">"+info[x].classId+"</td><td class=\"tablebody\">"+info[x].className+"</td>\n" +
+                "      <td class=\"tablebody\">"+info[x].beginning+"</td><td class=\"tablebody\">"+info[x].teacherName+"</td>\n" +
+                "      <td class=\"tablebody\">"+info[x].type+"</td>\n" +
+                "    </tr>";
+            }
+            var meeting = document.getElementById("myclassinfo");
+            meeting.innerHTML=ab;
+          }
+          else{
+            alert("数据加载异常");
+          }
+
+        },
+        error: function (data) {
+          alert("数据加失败");
+        }
+      })
+    }
+    else{
+      alert("请输入课程名");
+    }
+  }
+
+  function jumpCreate() {
+    window.location.href="createclass.html?teacherid="+teacher;
+  }
+  function jumpStu() {
+    window.location.href="studentinfo.html?teacherid="+teacher;
+  }
+  function jumpTeacher() {
+    window.location.href="teachermian.html?teacherid="+teacher;
+  }
+</script>
+</body>
+</html>
